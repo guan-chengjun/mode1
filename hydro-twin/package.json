@@ -1,0 +1,18 @@
+{
+  "name": "hydro-twin",
+  "private": true,
+  "version": "1.0.0",
+  "description": "水电站数字孪生三维仿真平台 (Vite + Three.js)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.160.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

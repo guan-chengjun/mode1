@@ -1,0 +1,126 @@
+/* ========== 全局 ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  background: #0b1018;
+  color: #dfe7ef;
+  font-size: 13px;
+}
+#viewport { position: fixed; inset: 0; }
+#viewport canvas { display: block; }
+.hidden { display: none !important; }
+
+/* ========== 顶栏 ========== */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 42px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; z-index: 20; pointer-events: none;
+  background: linear-gradient(180deg, rgba(8,14,24,.85), rgba(8,14,24,0));
+}
+#topbar .logo { font-size: 15px; font-weight: 600; letter-spacing: 1px; color: #7fd4ff; text-shadow: 0 0 12px rgba(64,180,255,.5); }
+#topbar .fps { font-size: 11px; color: #6fa8c9; font-family: Consolas, monospace; }
+
+/* ========== 加载遮罩 ========== */
+#loading {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #0b1018; transition: opacity .5s;
+}
+#loading.fade { opacity: 0; pointer-events: none; }
+#loading .spinner {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 3px solid rgba(127,212,255,.15); border-top-color: #7fd4ff;
+  animation: spin 0.9s linear infinite; margin-bottom: 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========== 右侧控制面板 ========== */
+#panel {
+  position: fixed; top: 52px; right: 12px; bottom: 12px; width: 292px;
+  overflow-y: auto; z-index: 20; padding: 12px;
+  background: rgba(13, 22, 34, 0.88);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  scrollbar-width: thin; scrollbar-color: #2c4a66 transparent;
+}
+#panel h3 {
+  font-size: 12px; color: #7fd4ff; letter-spacing: 2px;
+  margin: 14px 0 8px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(127, 212, 255, 0.18);
+}
+#panel h3:first-child { margin-top: 0; }
+
+.ctl-row { display: flex; align-items: center; justify-content: space-between; margin: 7px 0; gap: 8px; }
+.ctl-row label { color: #a9bdd0; flex-shrink: 0; }
+.ctl-row output { color: #7fd4ff; font-family: Consolas, monospace; font-size: 12px; min-width: 58px; text-align: right; }
+.ctl-row input[type="range"] { flex: 1; accent-color: #38bdf8; height: 3px; cursor: pointer; }
+
+.btn-group { display: flex; gap: 6px; margin: 6px 0; }
+.btn-group button, .ctl-btn {
+  flex: 1; padding: 6px 4px; font-size: 12px; cursor: pointer;
+  color: #a9bdd0; background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.25); border-radius: 6px;
+  transition: all .15s;
+}
+.btn-group button:hover, .ctl-btn:hover { background: rgba(56, 189, 248, 0.2); color: #e2f3ff; }
+.btn-group button.active {
+  background: rgba(56, 189, 248, 0.32); color: #fff;
+  border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+.ctl-btn { width: 100%; margin: 4px 0; }
+
+/* 开关 */
+.switch { position: relative; width: 36px; height: 18px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .track {
+  position: absolute; inset: 0; border-radius: 9px; cursor: pointer;
+  background: #22344a; transition: .2s;
+}
+.switch .track::before {
+  content: ""; position: absolute; width: 14px; height: 14px; border-radius: 50%;
+  left: 2px; top: 2px; background: #7d93a8; transition: .2s;
+}
+.switch input:checked + .track { background: #0e5d8a; }
+.switch input:checked + .track::before { transform: translateX(18px); background: #7fd4ff; }
+
+/* 发电数据面板 */
+.gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.gauge {
+  background: rgba(24, 40, 60, 0.7); border: 1px solid rgba(96, 165, 250, 0.18);
+  border-radius: 8px; padding: 7px 9px;
+}
+.gauge .g-label { font-size: 11px; color: #7d93a8; }
+.gauge .g-value { font-size: 17px; font-family: Consolas, monospace; color: #5eead4; margin-top: 2px; }
+.gauge .g-value.warn { color: #fbbf24; }
+.gauge .g-unit { font-size: 10px; color: #64748b; margin-left: 3px; }
+
+#mode-badge {
+  text-align: center; padding: 5px; border-radius: 6px; font-weight: 600; letter-spacing: 4px;
+  background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4);
+}
+#mode-badge.flood { background: rgba(251,191,36,.15); color: #fbbf24; border-color: rgba(251,191,36,.4); }
+#mode-badge.maint { background: rgba(248,113,113,.15); color: #f87171; border-color: rgba(248,113,113,.4); }
+
+/* ========== 构件参数卡片 ========== */
+#inspector {
+  position: fixed; left: 12px; top: 52px; width: 260px; z-index: 20;
+  background: rgba(13, 22, 34, 0.92); border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 10px; padding: 12px 14px; backdrop-filter: blur(8px);
+}
+#inspector h4 { color: #7fd4ff; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+#inspector h4 .close { cursor: pointer; color: #64748b; font-weight: 400; }
+#inspector h4 .close:hover { color: #fff; }
+#inspector table { width: 100%; border-collapse: collapse; }
+#inspector td { padding: 4px 0; border-bottom: 1px dashed rgba(96,165,250,.12); vertical-align: top; }
+#inspector td:first-child { color: #7d93a8; width: 76px; }
+#inspector td:last-child { color: #dfe7ef; }
+
+/* 漫游提示 */
+#fly-tip {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  padding: 8px 18px; border-radius: 20px; z-index: 20;
+  background: rgba(13, 22, 34, 0.85); border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #7fd4ff; font-size: 12px;
+}
